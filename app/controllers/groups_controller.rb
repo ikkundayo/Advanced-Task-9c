@@ -11,13 +11,13 @@ class GroupsController < ApplicationController
     @book = Book.new
     @group = Group.find(params[:id])
   end
-  
+
   def join
     @group = Group.find(params[:group_id])
     @group.users << current_user
     redirect_to  groups_path
   end
-  
+
   def new
     @group = Group.new
   end
@@ -43,11 +43,23 @@ class GroupsController < ApplicationController
       render "edit"
     end
   end
-  
+
   def destroy
     @group = Group.find(params[:id])
     @group.users.delete(current_user)
     redirect_to groups_path
+  end
+
+  def new_mail
+    @group = Group.find(params[:group_id])
+  end
+
+  def send_mail
+    @group = Group.find(params[:group_id])
+    group_users = @group.users
+    @mail_title = params[:mail_title]
+    @mail_content = params[:mail_content]
+    GroupmailMailer.send_mail(@mail_title, @mail_content,group_users).deliver
   end
 
   private
